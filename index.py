@@ -2,7 +2,7 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_bcrypt import Bcrypt
 
 from controllers.foods import addStudent, delStudent, getStudent, updateStudent
 import models.foods
@@ -20,6 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 
 CORS(app)
@@ -35,9 +36,13 @@ def error(e):
 
 @app.route('/')
 def welcome():
+  b_data = bcrypt.generate_password_hash('Welcome to API')
+  data = bcrypt.check_password_hash(b_data, 'Welcome to API')
+
   return jsonify({
       'status': 200,
-      'message': 'Welcome to API'
+      'message': str(b_data),
+      'is-true': data
   })
 
 
