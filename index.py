@@ -5,10 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 from controllers.foods import addStudent, delStudent, getStudent, updateStudent
-import models.foods
+from controllers.user import loginUser, registerUser
+from models import foods, auth
 
 
 from utils.db import connectdb
+from utils.jwt import login_required
 
 
 app = Flask(__name__)
@@ -46,6 +48,16 @@ def welcome():
   })
 
 
+@app.post('/register')
+def signup():
+  return registerUser()
+
+
+@app.post('/login')
+def signin():
+  return loginUser()
+
+
 @app.post('/add-student')
 def add():
   if request.method == 'POST':
@@ -53,6 +65,7 @@ def add():
 
 
 @app.get('/get-student')
+@login_required
 def get():
   return getStudent()
 
